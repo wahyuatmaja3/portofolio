@@ -1,63 +1,67 @@
-import * as THREE from 'three';
-import { GLTFLoader } from 'three/addons/loaders/GLTFLoader.js';
-import { DRACOLoader } from 'three/addons/loaders/DRACOLoader.js';
+import * as THREE from "three";
+import { GLTFLoader } from "three/addons/loaders/GLTFLoader.js";
+import { DRACOLoader } from "three/addons/loaders/DRACOLoader.js";
 
 /* =============================================
    LOADER SCREEN
    ============================================= */
-window.addEventListener('load', () => {
+window.addEventListener("load", () => {
   setTimeout(() => {
-    document.getElementById('loader').classList.add('hidden');
+    document.getElementById("loader").classList.add("hidden");
   }, 1200);
 });
 
 /* =============================================
    CUSTOM CURSOR
    ============================================= */
-const dot = document.getElementById('cursorDot');
-const ring = document.getElementById('cursorRing');
-let mouseX = 0, mouseY = 0;
-let ringX = 0, ringY = 0;
+const dot = document.getElementById("cursorDot");
+const ring = document.getElementById("cursorRing");
+let mouseX = 0,
+  mouseY = 0;
+let ringX = 0,
+  ringY = 0;
 
-document.addEventListener('mousemove', (e) => {
+document.addEventListener("mousemove", (e) => {
   mouseX = e.clientX;
   mouseY = e.clientY;
-  dot.style.left = mouseX + 'px';
-  dot.style.top = mouseY + 'px';
+  dot.style.left = mouseX + "px";
+  dot.style.top = mouseY + "px";
 });
 
 function animateRing() {
   ringX += (mouseX - ringX) * 0.12;
   ringY += (mouseY - ringY) * 0.12;
-  ring.style.left = ringX + 'px';
-  ring.style.top = ringY + 'px';
+  ring.style.left = ringX + "px";
+  ring.style.top = ringY + "px";
   requestAnimationFrame(animateRing);
 }
 animateRing();
 
-document.querySelectorAll('a, button, .project-card, .contact-card, .card-inner').forEach(el => {
-  el.addEventListener('mouseenter', () => ring.classList.add('hover'));
-  el.addEventListener('mouseleave', () => ring.classList.remove('hover'));
-});
+document
+  .querySelectorAll("a, button, .project-card, .contact-card, .card-inner")
+  .forEach((el) => {
+    el.addEventListener("mouseenter", () => ring.classList.add("hover"));
+    el.addEventListener("mouseleave", () => ring.classList.remove("hover"));
+  });
 
 /* =============================================
    NAVBAR SCROLL
    ============================================= */
-const navbar = document.getElementById('navbar');
-window.addEventListener('scroll', () => {
-  navbar.classList.toggle('scrolled', window.scrollY > 40);
+const navbar = document.getElementById("navbar");
+window.addEventListener("scroll", () => {
+  navbar.classList.toggle("scrolled", window.scrollY > 40);
 });
 
 /* =============================================
    PARTICLES
    ============================================= */
-const particleContainer = document.getElementById('particles');
-const colors = ['#6c63ff', '#00d4ff', '#ff6b9d', '#a78bfa'];
+const particleContainer = document.getElementById("particles");
+const colors = ["#c62828", "#ff5252", "#8b0000", "#ff8a80"];
 
-for (let i = 0; i < 28; i++) {
-  const p = document.createElement('div');
-  p.classList.add('particle');
-  const size = Math.random() * 4 + 1.5;
+for (let i = 0; i < 80; i++) {
+  const p = document.createElement("div");
+  p.classList.add("particle");
+  const size = Math.random() * 5 + 1;
   const color = colors[Math.floor(Math.random() * colors.length)];
   const delay = Math.random() * 12;
   const duration = Math.random() * 10 + 10;
@@ -74,12 +78,55 @@ for (let i = 0; i < 28; i++) {
   particleContainer.appendChild(p);
 }
 
+// Ember particles — falling sparks
+const emberColors = ["#ff5252", "#ff8a80", "#c62828", "#ff6e40"];
+for (let i = 0; i < 40; i++) {
+  const e = document.createElement("div");
+  e.classList.add("ember");
+  const size = Math.random() * 3 + 1;
+  const color = emberColors[Math.floor(Math.random() * emberColors.length)];
+  const delay = Math.random() * 15;
+  const duration = Math.random() * 8 + 6;
+  const left = Math.random() * 100;
+  e.style.cssText = `
+    width: ${size}px;
+    height: ${size}px;
+    background: ${color};
+    left: ${left}%;
+    animation-duration: ${duration}s;
+    animation-delay: ${delay}s;
+    box-shadow: 0 0 ${size * 3}px ${color};
+  `;
+  particleContainer.appendChild(e);
+}
+
+// Smoke wisps
+const smokeColors = ["#2a0000", "#1a0000", "#330000"];
+for (let i = 0; i < 12; i++) {
+  const s = document.createElement("div");
+  s.classList.add("smoke");
+  const size = Math.random() * 60 + 30;
+  const color = smokeColors[Math.floor(Math.random() * smokeColors.length)];
+  const delay = Math.random() * 20;
+  const duration = Math.random() * 15 + 12;
+  const left = Math.random() * 100;
+  s.style.cssText = `
+    width: ${size}px;
+    height: ${size}px;
+    background: ${color};
+    left: ${left}%;
+    animation-duration: ${duration}s;
+    animation-delay: ${delay}s;
+  `;
+  particleContainer.appendChild(s);
+}
+
 /* =============================================
    THREE.JS — 3D MODEL VIEWER
    ============================================= */
-const canvas = document.getElementById('threeCanvas');
-const container = document.getElementById('modelContainer');
-const hintEl = document.getElementById('modelHint');
+const canvas = document.getElementById("threeCanvas");
+const container = document.getElementById("modelContainer");
+const hintEl = document.getElementById("modelHint");
 
 // ---- Scene ----
 const scene = new THREE.Scene();
@@ -89,15 +136,16 @@ const camera = new THREE.PerspectiveCamera(
   45,
   container.clientWidth / container.clientHeight,
   0.02,
-  1000
+  1000,
 );
-camera.position.set(0, 1.4, 1.8);
+camera.position.set(0, 0, 4);
+camera.lookAt(0, 0, 0);
 
 // ---- Renderer ----
 const renderer = new THREE.WebGLRenderer({
   canvas,
   antialias: true,
-  alpha: true
+  alpha: true,
 });
 renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
 renderer.setSize(container.clientWidth, container.clientHeight);
@@ -116,20 +164,20 @@ dirLight.position.set(5, 8, 5);
 dirLight.castShadow = true;
 scene.add(dirLight);
 
-const bluePoint = new THREE.PointLight(0x6c63ff, 8, 20);
+const bluePoint = new THREE.PointLight(0xc62828, 8, 20);
 bluePoint.position.set(-3, 2, 2);
 scene.add(bluePoint);
 
-const cyanPoint = new THREE.PointLight(0x00d4ff, 6, 20);
+const cyanPoint = new THREE.PointLight(0xff5252, 6, 20);
 cyanPoint.position.set(3, -2, 2);
 scene.add(cyanPoint);
 
-const rimLight = new THREE.PointLight(0xff6b9d, 3, 15);
+const rimLight = new THREE.PointLight(0x8b0000, 3, 15);
 rimLight.position.set(0, -3, -2);
 scene.add(rimLight);
 
 // ---- Grid helper (subtle floor) ----
-const gridHelper = new THREE.GridHelper(10, 20, 0x6c63ff, 0x111827);
+const gridHelper = new THREE.GridHelper(10, 20, 0xc62828, 0x12101a);
 gridHelper.position.y = -1.6;
 gridHelper.material.opacity = 0.25;
 gridHelper.material.transparent = true;
@@ -140,21 +188,23 @@ let model = null;
 let modelLoaded = false;
 let autoRotateSpeed = 0.004;
 
-let baseRotationY = 90;   // driven by scroll
-let userRotationX = 0;   // driven by mouse drag
-let userRotationY = 2;
+let baseRotationY = 2; // driven by scroll
+let userRotationX = 0; // driven by mouse drag
+let userRotationY = 0;
 let targetRotX = 0;
 let targetRotY = 0;
 let isGrabbing = false;
 
 const dracoLoader = new DRACOLoader();
-dracoLoader.setDecoderPath('https://cdn.jsdelivr.net/npm/three@0.160.1/examples/jsm/libs/draco/');
+dracoLoader.setDecoderPath(
+  "https://cdn.jsdelivr.net/npm/three@0.160.1/examples/jsm/libs/draco/",
+);
 
 const loader = new GLTFLoader();
 loader.setDRACOLoader(dracoLoader);
 
 loader.load(
-  'model.glb',
+  "model.glb",
   (gltf) => {
     model = gltf.scene;
 
@@ -163,10 +213,15 @@ loader.load(
     const size = box.getSize(new THREE.Vector3());
     const center = box.getCenter(new THREE.Vector3());
     const maxDim = Math.max(size.x, size.y, size.z);
-    const scale = 4.5 / maxDim;
+    const scale = 8 / maxDim;
 
     model.scale.setScalar(scale);
-    model.position.sub(center.multiplyScalar(scale));
+    model.position.set(
+      -center.x * scale - 1.5,
+      -center.y * scale - 0,
+      -center.z * scale,
+    );
+    model.userData.baseY = model.position.y;
 
     // Enable shadows
     model.traverse((child) => {
@@ -180,41 +235,43 @@ loader.load(
     modelLoaded = true;
 
     // Hide loader hint after 4s of interaction
-    setTimeout(() => hintEl.classList.add('hidden'), 5000);
+    setTimeout(() => hintEl.classList.add("hidden"), 5000);
   },
   (progress) => {
-    const pct = (progress.loaded / progress.total * 100).toFixed(0);
-    document.querySelector('.loader-text').textContent = `Loading 3D model... ${pct}%`;
+    const pct = ((progress.loaded / progress.total) * 100).toFixed(0);
+    document.querySelector(".loader-text").textContent =
+      `Loading 3D model... ${pct}%`;
   },
   (error) => {
-    console.warn('GLB load error:', error);
-    document.querySelector('.loader-text').textContent = 'Ready';
-  }
+    console.warn("GLB load error:", error);
+    document.querySelector(".loader-text").textContent = "Ready";
+  },
 );
 
 // ---- Scroll → rotate Y ----
 let scrollRotation = 0;
-window.addEventListener('scroll', () => {
-  const heroHeight = document.getElementById('hero').offsetHeight;
+window.addEventListener("scroll", () => {
+  const heroHeight = document.getElementById("hero").offsetHeight;
   const progress = Math.min(window.scrollY / heroHeight, 1);
   scrollRotation = progress * Math.PI * 1.5; // 270° on full hero scroll
 });
 
 // ---- Drag to rotate ----
 let pointerDown = false;
-let lastPointerX = 0, lastPointerY = 0;
+let lastPointerX = 0,
+  lastPointerY = 0;
 
-container.addEventListener('pointerdown', (e) => {
+container.addEventListener("pointerdown", (e) => {
   pointerDown = true;
   isGrabbing = true;
   lastPointerX = e.clientX;
   lastPointerY = e.clientY;
-  container.style.cursor = 'grabbing';
-  hintEl.classList.add('hidden');
+  container.style.cursor = "grabbing";
+  hintEl.classList.add("hidden");
   e.preventDefault();
 });
 
-window.addEventListener('pointermove', (e) => {
+window.addEventListener("pointermove", (e) => {
   if (!pointerDown) return;
   const dx = e.clientX - lastPointerX;
   const dy = e.clientY - lastPointerY;
@@ -225,26 +282,30 @@ window.addEventListener('pointermove', (e) => {
   lastPointerY = e.clientY;
 });
 
-window.addEventListener('pointerup', () => {
+window.addEventListener("pointerup", () => {
   pointerDown = false;
   isGrabbing = false;
-  container.style.cursor = 'grab';
+  container.style.cursor = "grab";
 });
 
-container.style.cursor = 'grab';
+container.style.cursor = "grab";
 
 // ---- Touch support ----
-container.addEventListener('touchstart', (e) => {
-  const t = e.touches[0];
-  pointerDown = true;
-  isGrabbing = true;
-  lastPointerX = t.clientX;
-  lastPointerY = t.clientY;
-  hintEl.classList.add('hidden');
-  e.preventDefault();
-}, { passive: false });
+container.addEventListener(
+  "touchstart",
+  (e) => {
+    const t = e.touches[0];
+    pointerDown = true;
+    isGrabbing = true;
+    lastPointerX = t.clientX;
+    lastPointerY = t.clientY;
+    hintEl.classList.add("hidden");
+    e.preventDefault();
+  },
+  { passive: false },
+);
 
-window.addEventListener('touchmove', (e) => {
+window.addEventListener("touchmove", (e) => {
   if (!pointerDown) return;
   const t = e.touches[0];
   const dx = t.clientX - lastPointerX;
@@ -256,13 +317,13 @@ window.addEventListener('touchmove', (e) => {
   lastPointerY = t.clientY;
 });
 
-window.addEventListener('touchend', () => {
+window.addEventListener("touchend", () => {
   pointerDown = false;
   isGrabbing = false;
 });
 
 // ---- Resize ----
-window.addEventListener('resize', () => {
+window.addEventListener("resize", () => {
   const w = container.clientWidth;
   const h = container.clientHeight;
   camera.aspect = w / h;
@@ -304,8 +365,8 @@ function animate() {
     model.rotation.y = baseRotationY + scrollRotation + userRotationY;
     model.rotation.x = userRotationX;
 
-    // Subtle floating bob
-    model.position.y = Math.sin(t * 0.6) * 0.06;
+    // Subtle floating bob (preserve initial Y offset)
+    model.position.y = model.userData.baseY + Math.sin(t * 0.6) * 0.06;
   }
 
   renderer.render(scene, camera);
@@ -316,72 +377,93 @@ animate();
    INTERSECTION OBSERVER — Reveal & Skill Bars
    ============================================= */
 const revealEls = document.querySelectorAll(
-  '#about .section-header, .about-grid, #skills .section-header, .skill-category, ' +
-  '#projects .section-header, .project-card, #contact .section-header, .contact-card, ' +
-  '.stat-item, .card-inner'
+  "#about .section-header, .about-grid, #skills .section-header, .skill-category, " +
+    "#projects .section-header, .project-card, #contact .section-header, .contact-card, " +
+    ".stat-item, .card-inner",
 );
 
 revealEls.forEach((el, i) => {
-  el.classList.add('reveal');
+  el.classList.add("reveal");
   el.style.transitionDelay = `${(i % 4) * 0.08}s`;
 });
 
-const revealObserver = new IntersectionObserver((entries) => {
-  entries.forEach(entry => {
-    if (entry.isIntersecting) {
-      entry.target.classList.add('visible');
-    }
-  });
-}, { threshold: 0.12 });
+const revealObserver = new IntersectionObserver(
+  (entries) => {
+    entries.forEach((entry) => {
+      if (entry.isIntersecting) {
+        entry.target.classList.add("visible");
+      }
+    });
+  },
+  { threshold: 0.12 },
+);
 
-revealEls.forEach(el => revealObserver.observe(el));
+revealEls.forEach((el) => revealObserver.observe(el));
 
 // Animate skill bars
-const barObserver = new IntersectionObserver((entries) => {
-  entries.forEach(entry => {
-    if (entry.isIntersecting) {
-      entry.target.querySelectorAll('.pill-fill').forEach(fill => {
-        // Reset then animate
-        fill.style.width = '0';
-        requestAnimationFrame(() => {
-          fill.style.width = fill.parentElement.previousElementSibling === null
-            ? fill.style.width
-            : fill.getAttribute('style').match(/width:\s*([\d.]+%)/)?.[1] || '0';
-          // Re-apply from data
-          const target = fill.style.width;
-          fill.style.width = '0';
-          setTimeout(() => { fill.style.width = target; }, 100);
+const barObserver = new IntersectionObserver(
+  (entries) => {
+    entries.forEach((entry) => {
+      if (entry.isIntersecting) {
+        entry.target.querySelectorAll(".pill-fill").forEach((fill) => {
+          // Reset then animate
+          fill.style.width = "0";
+          requestAnimationFrame(() => {
+            fill.style.width =
+              fill.parentElement.previousElementSibling === null
+                ? fill.style.width
+                : fill.getAttribute("style").match(/width:\s*([\d.]+%)/)?.[1] ||
+                  "0";
+            // Re-apply from data
+            const target = fill.style.width;
+            fill.style.width = "0";
+            setTimeout(() => {
+              fill.style.width = target;
+            }, 100);
+          });
         });
-      });
-      barObserver.unobserve(entry.target);
-    }
-  });
-}, { threshold: 0.3 });
+        barObserver.unobserve(entry.target);
+      }
+    });
+  },
+  { threshold: 0.3 },
+);
 
-document.querySelectorAll('.skill-category').forEach(cat => barObserver.observe(cat));
+document
+  .querySelectorAll(".skill-category")
+  .forEach((cat) => barObserver.observe(cat));
 
 /* =============================================
    ACTIVE NAV LINK ON SCROLL
    ============================================= */
-const sections = document.querySelectorAll('section[id]');
-const navLinks = document.querySelectorAll('.nav-links a');
+const sections = document.querySelectorAll("section[id]");
+const navLinks = document.querySelectorAll(".nav-links a");
 
-const sectionObserver = new IntersectionObserver((entries) => {
-  entries.forEach(entry => {
-    if (entry.isIntersecting) {
-      navLinks.forEach(a => a.style.color = '');
-      const activeLink = document.querySelector(`.nav-links a[href="#${entry.target.id}"]`);
-      if (activeLink) activeLink.style.color = 'var(--text)';
-    }
-  });
-}, { threshold: 0.3, rootMargin: '-80px 0px 0px 0px' });
+const sectionObserver = new IntersectionObserver(
+  (entries) => {
+    entries.forEach((entry) => {
+      if (entry.isIntersecting) {
+        navLinks.forEach((a) => (a.style.color = ""));
+        const activeLink = document.querySelector(
+          `.nav-links a[href="#${entry.target.id}"]`,
+        );
+        if (activeLink) activeLink.style.color = "var(--text)";
+      }
+    });
+  },
+  { threshold: 0.3, rootMargin: "-80px 0px 0px 0px" },
+);
 
-sections.forEach(s => sectionObserver.observe(s));
+sections.forEach((s) => sectionObserver.observe(s));
 
 /* =============================================
    SMOOTH HOVER EFFECT ON NAV LINKS
    ============================================= */
-document.querySelectorAll('.nav-links a, .nav-cta, .btn-primary, .btn-secondary, .btn-outline').forEach(el => {
-  el.addEventListener('mouseenter', () => ring.classList.add('hover'));
-  el.addEventListener('mouseleave', () => ring.classList.remove('hover'));
-});
+document
+  .querySelectorAll(
+    ".nav-links a, .nav-cta, .btn-primary, .btn-secondary, .btn-outline",
+  )
+  .forEach((el) => {
+    el.addEventListener("mouseenter", () => ring.classList.add("hover"));
+    el.addEventListener("mouseleave", () => ring.classList.remove("hover"));
+  });
