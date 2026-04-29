@@ -53,73 +53,166 @@ window.addEventListener("scroll", () => {
 });
 
 /* =============================================
-   PARTICLES
+   THEME
    ============================================= */
+const THEME_KEYS = {
+  color: "porto3d_theme_color",
+  mode: "porto3d_theme_mode",
+};
+
+const THEMES = {
+  red: {
+    particles: ["#c62828", "#ff5252", "#8b0000", "#ff8a80"],
+    embers: ["#ff5252", "#ff8a80", "#c62828", "#ff6e40"],
+    smoke: ["#2a0000", "#1a0000", "#330000"],
+    lights: { primary: 0xc62828, secondary: 0xff5252, rim: 0x8b0000 },
+  },
+  blue: {
+    particles: ["#2563eb", "#38bdf8", "#1e3a8a", "#60a5fa"],
+    embers: ["#38bdf8", "#60a5fa", "#2563eb", "#0ea5e9"],
+    smoke: ["#0b1b3b", "#0d2346", "#162f63"],
+    lights: { primary: 0x2563eb, secondary: 0x38bdf8, rim: 0x1e3a8a },
+  },
+  purple: {
+    particles: ["#7c3aed", "#c084fc", "#4c1d95", "#a78bfa"],
+    embers: ["#c084fc", "#a78bfa", "#7c3aed", "#8b5cf6"],
+    smoke: ["#1d1038", "#2a1650", "#341b63"],
+    lights: { primary: 0x7c3aed, secondary: 0xc084fc, rim: 0x4c1d95 },
+  },
+  green: {
+    particles: ["#16a34a", "#4ade80", "#166534", "#86efac"],
+    embers: ["#4ade80", "#86efac", "#16a34a", "#22c55e"],
+    smoke: ["#0f2d1b", "#123825", "#184b31"],
+    lights: { primary: 0x16a34a, secondary: 0x4ade80, rim: 0x166534 },
+  },
+};
+
+const MODES = ["dark", "light"];
+const COLORS = Object.keys(THEMES);
+
+const themeColorSelect = document.getElementById("themeColorSelect");
+const themeModeToggle = document.getElementById("themeModeToggle");
 const particleContainer = document.getElementById("particles");
-const colors = ["#c62828", "#ff5252", "#8b0000", "#ff8a80"];
 
-for (let i = 0; i < 80; i++) {
-  const p = document.createElement("div");
-  p.classList.add("particle");
-  const size = Math.random() * 5 + 1;
-  const color = colors[Math.floor(Math.random() * colors.length)];
-  const delay = Math.random() * 12;
-  const duration = Math.random() * 10 + 10;
-  const left = Math.random() * 100;
-  p.style.cssText = `
-    width: ${size}px;
-    height: ${size}px;
-    background: ${color};
-    left: ${left}%;
-    animation-duration: ${duration}s;
-    animation-delay: ${delay}s;
-    box-shadow: 0 0 ${size * 2}px ${color};
-  `;
-  particleContainer.appendChild(p);
+function sanitizeThemeColor(value) {
+  return COLORS.includes(value) ? value : "red";
 }
 
-// Ember particles — falling sparks
-const emberColors = ["#ff5252", "#ff8a80", "#c62828", "#ff6e40"];
-for (let i = 0; i < 40; i++) {
-  const e = document.createElement("div");
-  e.classList.add("ember");
-  const size = Math.random() * 3 + 1;
-  const color = emberColors[Math.floor(Math.random() * emberColors.length)];
-  const delay = Math.random() * 15;
-  const duration = Math.random() * 8 + 6;
-  const left = Math.random() * 100;
-  e.style.cssText = `
-    width: ${size}px;
-    height: ${size}px;
-    background: ${color};
-    left: ${left}%;
-    animation-duration: ${duration}s;
-    animation-delay: ${delay}s;
-    box-shadow: 0 0 ${size * 3}px ${color};
-  `;
-  particleContainer.appendChild(e);
+function sanitizeThemeMode(value) {
+  return MODES.includes(value) ? value : "dark";
 }
 
-// Smoke wisps
-const smokeColors = ["#2a0000", "#1a0000", "#330000"];
-for (let i = 0; i < 12; i++) {
-  const s = document.createElement("div");
-  s.classList.add("smoke");
-  const size = Math.random() * 60 + 30;
-  const color = smokeColors[Math.floor(Math.random() * smokeColors.length)];
-  const delay = Math.random() * 20;
-  const duration = Math.random() * 15 + 12;
-  const left = Math.random() * 100;
-  s.style.cssText = `
-    width: ${size}px;
-    height: ${size}px;
-    background: ${color};
-    left: ${left}%;
-    animation-duration: ${duration}s;
-    animation-delay: ${delay}s;
-  `;
-  particleContainer.appendChild(s);
+function loadTheme() {
+  return {
+    color: sanitizeThemeColor(localStorage.getItem(THEME_KEYS.color)),
+    mode: sanitizeThemeMode(localStorage.getItem(THEME_KEYS.mode)),
+  };
 }
+
+function saveTheme(theme) {
+  localStorage.setItem(THEME_KEYS.color, theme.color);
+  localStorage.setItem(THEME_KEYS.mode, theme.mode);
+}
+
+function applyThemeToDOM(theme) {
+  document.body.dataset.themeColor = theme.color;
+  document.body.dataset.themeMode = theme.mode;
+  if (themeColorSelect) themeColorSelect.value = theme.color;
+  if (themeModeToggle) {
+    themeModeToggle.textContent = theme.mode === "dark" ? "Light" : "Dark";
+  }
+}
+
+function buildParticles(theme) {
+  const palette = THEMES[theme.color];
+  particleContainer.innerHTML = "";
+
+  for (let i = 0; i < 80; i++) {
+    const p = document.createElement("div");
+    p.classList.add("particle");
+    const size = Math.random() * 5 + 1;
+    const color = palette.particles[Math.floor(Math.random() * palette.particles.length)];
+    const delay = Math.random() * 12;
+    const duration = Math.random() * 10 + 10;
+    const left = Math.random() * 100;
+    p.style.cssText = `
+      width: ${size}px;
+      height: ${size}px;
+      background: ${color};
+      left: ${left}%;
+      animation-duration: ${duration}s;
+      animation-delay: ${delay}s;
+      box-shadow: 0 0 ${size * 2}px ${color};
+    `;
+    particleContainer.appendChild(p);
+  }
+
+  for (let i = 0; i < 40; i++) {
+    const e = document.createElement("div");
+    e.classList.add("ember");
+    const size = Math.random() * 3 + 1;
+    const color = palette.embers[Math.floor(Math.random() * palette.embers.length)];
+    const delay = Math.random() * 15;
+    const duration = Math.random() * 8 + 6;
+    const left = Math.random() * 100;
+    e.style.cssText = `
+      width: ${size}px;
+      height: ${size}px;
+      background: ${color};
+      left: ${left}%;
+      animation-duration: ${duration}s;
+      animation-delay: ${delay}s;
+      box-shadow: 0 0 ${size * 3}px ${color};
+    `;
+    particleContainer.appendChild(e);
+  }
+
+  for (let i = 0; i < 12; i++) {
+    const s = document.createElement("div");
+    s.classList.add("smoke");
+    const size = Math.random() * 60 + 30;
+    const color = palette.smoke[Math.floor(Math.random() * palette.smoke.length)];
+    const delay = Math.random() * 20;
+    const duration = Math.random() * 15 + 12;
+    const left = Math.random() * 100;
+    s.style.cssText = `
+      width: ${size}px;
+      height: ${size}px;
+      background: ${color};
+      left: ${left}%;
+      animation-duration: ${duration}s;
+      animation-delay: ${delay}s;
+    `;
+    particleContainer.appendChild(s);
+  }
+}
+
+let themeState = loadTheme();
+applyThemeToDOM(themeState);
+buildParticles(themeState);
+
+if (themeColorSelect) {
+  themeColorSelect.addEventListener("change", (e) => {
+    themeState.color = sanitizeThemeColor(e.target.value);
+    applyThemeToDOM(themeState);
+    buildParticles(themeState);
+    applyThemeToThree(themeState);
+    saveTheme(themeState);
+  });
+}
+
+if (themeModeToggle) {
+  themeModeToggle.addEventListener("click", () => {
+    themeState.mode = themeState.mode === "dark" ? "light" : "dark";
+    applyThemeToDOM(themeState);
+    applyThemeToThree(themeState);
+    saveTheme(themeState);
+  });
+}
+
+/* =============================================
+   THREE.JS — 3D MODEL VIEWER
+   ============================================= */
 
 /* =============================================
    THREE.JS — 3D MODEL VIEWER
@@ -176,12 +269,26 @@ const rimLight = new THREE.PointLight(0x8b0000, 3, 15);
 rimLight.position.set(0, -3, -2);
 scene.add(rimLight);
 
+function applyThemeToThree(theme) {
+  const palette = THEMES[theme.color] || THEMES.red;
+  bluePoint.color.setHex(palette.lights.primary);
+  cyanPoint.color.setHex(palette.lights.secondary);
+  rimLight.color.setHex(palette.lights.rim);
+  if (gridHelper?.material?.color) {
+    gridHelper.material.color.setHex(palette.lights.primary);
+  }
+  bluePoint.intensity = theme.mode === "light" ? 6.5 : 8;
+  cyanPoint.intensity = theme.mode === "light" ? 5 : 6;
+  rimLight.intensity = theme.mode === "light" ? 2.4 : 3;
+}
+
 // ---- Grid helper (subtle floor) ----
 const gridHelper = new THREE.GridHelper(10, 20, 0xc62828, 0x12101a);
 gridHelper.position.y = -1.6;
 gridHelper.material.opacity = 0.25;
 gridHelper.material.transparent = true;
 scene.add(gridHelper);
+applyThemeToThree(themeState);
 
 // ---- Load GLB ----
 let model = null;
@@ -406,17 +513,9 @@ const barObserver = new IntersectionObserver(
     entries.forEach((entry) => {
       if (entry.isIntersecting) {
         entry.target.querySelectorAll(".pill-fill").forEach((fill) => {
-          // Reset then animate
+          const target = fill.style.width || "0";
           fill.style.width = "0";
           requestAnimationFrame(() => {
-            fill.style.width =
-              fill.parentElement.previousElementSibling === null
-                ? fill.style.width
-                : fill.getAttribute("style").match(/width:\s*([\d.]+%)/)?.[1] ||
-                  "0";
-            // Re-apply from data
-            const target = fill.style.width;
-            fill.style.width = "0";
             setTimeout(() => {
               fill.style.width = target;
             }, 100);
