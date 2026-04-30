@@ -257,6 +257,10 @@ dirLight.position.set(5, 8, 5);
 dirLight.castShadow = true;
 scene.add(dirLight);
 
+const underLight = new THREE.DirectionalLight(0xc62828, 0.4);
+underLight.position.set(0, -6, 2);
+scene.add(underLight);
+
 const bluePoint = new THREE.PointLight(0xc62828, 8, 20);
 bluePoint.position.set(-3, 2, 2);
 scene.add(bluePoint);
@@ -269,17 +273,58 @@ const rimLight = new THREE.PointLight(0x8b0000, 3, 15);
 rimLight.position.set(0, -3, -2);
 scene.add(rimLight);
 
+const fillLight = new THREE.DirectionalLight(0xffffff, 0.25);
+fillLight.position.set(-4, 2, 4);
+scene.add(fillLight);
+
+let baseBlueIntensity = 8;
+let baseCyanIntensity = 6;
+let baseRimIntensity = 3;
+
 function applyThemeToThree(theme) {
   const palette = THEMES[theme.color] || THEMES.red;
-  bluePoint.color.setHex(palette.lights.primary);
-  cyanPoint.color.setHex(palette.lights.secondary);
-  rimLight.color.setHex(palette.lights.rim);
-  if (gridHelper?.material?.color) {
-    gridHelper.material.color.setHex(palette.lights.primary);
+
+  if (theme.mode === "light") {
+    bluePoint.color.setHex(0xffffff);
+    cyanPoint.color.setHex(0xf5f5f5);
+    rimLight.color.setHex(0xffffff);
+    underLight.color.setHex(0xffffff);
+    underLight.intensity = 0;
+
+    ambientLight.intensity = 1.05;
+    dirLight.color.setHex(0xffffff);
+    dirLight.position.set(5, 8, 5);
+    dirLight.intensity = 3;
+    fillLight.intensity = 1.1;
+
+    baseBlueIntensity = 6.5;
+    baseCyanIntensity = 5;
+    baseRimIntensity = 2.4;
+
+    if (gridHelper?.material?.color) {
+      gridHelper.material.color.setHex(0xd1d5db);
+    }
+  } else {
+    bluePoint.color.setHex(palette.lights.primary);
+    cyanPoint.color.setHex(palette.lights.secondary);
+    rimLight.color.setHex(palette.lights.rim);
+    underLight.color.setHex(palette.lights.primary);
+    underLight.intensity = 1.4;
+
+    ambientLight.intensity = 0.6;
+    dirLight.color.setHex(palette.lights.secondary);
+    dirLight.position.set(0, -6, 2);
+    dirLight.intensity = 2.5;
+    fillLight.intensity = 0.25;
+
+    baseBlueIntensity = 8;
+    baseCyanIntensity = 6;
+    baseRimIntensity = 3;
+
+    if (gridHelper?.material?.color) {
+      gridHelper.material.color.setHex(palette.lights.primary);
+    }
   }
-  bluePoint.intensity = theme.mode === "light" ? 6.5 : 8;
-  cyanPoint.intensity = theme.mode === "light" ? 5 : 6;
-  rimLight.intensity = theme.mode === "light" ? 2.4 : 3;
 }
 
 // ---- Grid helper (subtle floor) ----
@@ -449,9 +494,9 @@ function animate() {
   const t = clock.getElapsedTime();
 
   // Pulsing lights
-  bluePoint.intensity = 8 + Math.sin(t * 1.1) * 2;
-  cyanPoint.intensity = 6 + Math.sin(t * 0.8 + 1) * 2;
-  rimLight.intensity = 3 + Math.sin(t * 1.4 + 2) * 1;
+  bluePoint.intensity = baseBlueIntensity + Math.sin(t * 1.1) * 2;
+  cyanPoint.intensity = baseCyanIntensity + Math.sin(t * 0.8 + 1) * 2;
+  rimLight.intensity = baseRimIntensity + Math.sin(t * 1.4 + 2) * 1;
 
   // Animate light positions gently
   bluePoint.position.x = -3 + Math.sin(t * 0.5) * 0.8;
