@@ -337,6 +337,7 @@
             <div class="projects-grid">
                 <a
                     class="project-card"
+                    data-project-id="deiji-marketplace"
                     href="https://github.com/wahyuatmaja3/deiji-marketplace"
                     target="_blank"
                 >
@@ -366,6 +367,7 @@
                 </a>
                 <a
                     class="project-card"
+                    data-project-id="kyros"
                     href="https://github.com/wahyuatmaja3/kyros"
                     target="_blank"
                 >
@@ -396,6 +398,7 @@
                 </a>
                 <a
                     class="project-card"
+                    data-project-id="figureiie"
                     href="https://github.com/wahyuatmaja3/figureiie"
                     target="_blank"
                 >
@@ -425,6 +428,7 @@
                 </a>
                 <a
                     class="project-card"
+                    data-project-id="pendaftaran-siswa-smktag"
                     href="https://github.com/wahyuatmaja3/pendaftaran-siswa-smktag"
                     target="_blank"
                 >
@@ -455,6 +459,7 @@
                 </a>
                 <a
                     class="project-card"
+                    data-project-id="yakusoku"
                     href="https://github.com/wahyuatmaja3/yakusoku"
                     target="_blank"
                 >
@@ -484,6 +489,7 @@
                 </a>
                 <a
                     class="project-card featured"
+                    data-project-id="artha"
                     href="https://github.com/wahyuatmaja3/artha"
                     target="_blank"
                 >
@@ -696,6 +702,71 @@
                 </div>
             </div>
         </footer>
+
+        <div class="case-study-modal" id="caseStudyModal" aria-hidden="true">
+            <div class="case-study-backdrop" data-close-case-study></div>
+            <div
+                class="case-study-dialog"
+                role="dialog"
+                aria-modal="true"
+                aria-labelledby="caseStudyTitle"
+                aria-describedby="caseStudySummary"
+            >
+                <button
+                    class="case-study-close"
+                    id="caseStudyClose"
+                    type="button"
+                    aria-label="Close case study"
+                >
+                    ✕
+                </button>
+                <p class="case-study-kicker">Interactive Case Study</p>
+                <h3 class="case-study-title" id="caseStudyTitle"></h3>
+                <p class="case-study-summary" id="caseStudySummary"></p>
+
+                <div class="case-study-grid">
+                    <section>
+                        <h4>Problem</h4>
+                        <p id="caseStudyProblem"></p>
+                    </section>
+                    <section>
+                        <h4>Solution</h4>
+                        <p id="caseStudySolution"></p>
+                    </section>
+                </div>
+
+                <section class="case-study-stack-block">
+                    <h4>Stack</h4>
+                    <div class="case-study-stack" id="caseStudyStack"></div>
+                </section>
+
+                <section class="case-study-highlights-block">
+                    <h4>Highlights</h4>
+                    <ul class="case-study-highlights" id="caseStudyHighlights"></ul>
+                </section>
+
+                <div class="case-study-actions">
+                    <a
+                        class="btn-outline"
+                        id="caseStudyRepo"
+                        href="#"
+                        target="_blank"
+                        rel="noopener noreferrer"
+                    >
+                        View on GitHub
+                    </a>
+                    <a
+                        class="btn-primary"
+                        id="caseStudyDemo"
+                        href="#"
+                        target="_blank"
+                        rel="noopener noreferrer"
+                    >
+                        Open Demo
+                    </a>
+                </div>
+            </div>
+        </div>
 
         <script type="importmap">
             {
