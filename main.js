@@ -2319,7 +2319,7 @@
                 mobileLinks.forEach(function (a) {
                     a.classList.remove("is-active");
                 });
-                if (indicator) indicator.style.opacity = "0";
+                if (navGooey) navGooey.style.opacity = "0";
             }
 
             lastY = y;
@@ -2676,6 +2676,22 @@
                 hint: "Obsidian ⇄ Prism",
                 run: function () {
                     applyTheme(getTheme() === "obsidian" ? "prism" : "obsidian");
+                }
+            },
+            {
+                group: "Actions",
+                icon: "⚡",
+                title: "Rebuild portfolio (Swarm)",
+                hint: "Multiplayer cursor animation",
+                run: function () {
+                    closeCmd();
+                    setTimeout(function () {
+                        if (typeof triggerSwarmRebuild === "function") {
+                            triggerSwarmRebuild();
+                        } else if (window.triggerSwarmRebuild) {
+                            window.triggerSwarmRebuild();
+                        }
+                    }, 220);
                 }
             },
             {
@@ -3242,5 +3258,107 @@ if (history.replaceState) history.replaceState(null, "", hash);
         document.body.classList.add("has-target-cursor");
         last = performance.now();
         raf = requestAnimationFrame(frame);
+
+        window.addEventListener("swarm:start", function () {
+            document.body.classList.remove("has-target-cursor");
+            cursor.classList.remove("is-on");
+            cursor.style.display = "none";
+        });
+        window.addEventListener("swarm:close", function () {
+            cursor.style.display = "";
+            document.body.classList.add("has-target-cursor");
+        });
+    });
+
+    /* --------------------------------------------------------------------
+       SWARM REBUILD - easter egg multiplayer rebuild animation
+       ------------------------------------------------------------------ */
+    component("swarm", function () {
+        var pill = document.getElementById("easterPill");
+        var pillBtn = document.getElementById("easterPillBtn");
+        var pillClose = document.getElementById("easterPillClose");
+        var mobileBtn = document.getElementById("navMobileSwarm");
+        var isDismissed = false;
+
+        try {
+            isDismissed = sessionStorage.getItem("portoh-easter-dismissed") === "1";
+        } catch (_) {}
+
+        function triggerSwarmRebuild() {
+            if (pill) pill.classList.remove("is-visible");
+
+            if (window.__swarmRebuild) {
+                window.__swarmRebuild.start();
+                return;
+            }
+
+            // Fallback load if not already ready
+            var script = document.createElement("script");
+            script.src = "swarm.js";
+            script.onload = function () {
+                if (window.__swarmRebuild) {
+                    window.__swarmRebuild.start();
+                }
+            };
+            document.body.appendChild(script);
+        }
+
+        window.triggerSwarmRebuild = triggerSwarmRebuild;
+
+        // Reveal easter pill after 2.2 seconds if not dismissed
+        if (pill && !isDismissed) {
+            window.setTimeout(function () {
+                // Only show if swarm is not already active
+                if (!window.__swarmRebuild || !window.__swarmRebuild.app) {
+                    pill.classList.add("is-visible");
+                    pill.setAttribute("aria-hidden", "false");
+                }
+            }, 2200);
+        }
+
+        if (pillBtn) {
+            pillBtn.addEventListener("click", function (e) {
+                e.preventDefault();
+                triggerSwarmRebuild();
+            });
+        }
+
+        if (pillClose) {
+            pillClose.addEventListener("click", function (e) {
+                e.preventDefault();
+                e.stopPropagation();
+                if (pill) {
+                    pill.classList.remove("is-visible");
+                    pill.setAttribute("aria-hidden", "true");
+                }
+                try {
+                    sessionStorage.setItem("portoh-easter-dismissed", "1");
+                } catch (_) {}
+            });
+        }
+
+        if (mobileBtn) {
+            mobileBtn.addEventListener("click", function (e) {
+                e.preventDefault();
+                var nav = document.getElementById("nav");
+                if (nav) nav.classList.remove("is-open");
+                setTimeout(triggerSwarmRebuild, 200);
+            });
+        }
+
+        window.addEventListener("keydown", function (e) {
+            if (e.altKey && e.shiftKey && (e.key === "S" || e.key === "s")) {
+                e.preventDefault();
+                triggerSwarmRebuild();
+            }
+        });
+
+        window.addEventListener("swarm:start", function () {
+            if (pill) pill.classList.remove("is-visible");
+        });
+
+        window.addEventListener("swarm:close", function () {
+            // Keep pill hidden once experienced
+        });
     });
 }());

@@ -25,6 +25,7 @@
             rel="stylesheet"
         />
         <link rel="stylesheet" href="style.css" />
+        <link rel="icon" type="image/jpeg" href="me.jpeg" />
 
         <script>
             // Applied before first paint so the theme never flashes.
@@ -188,6 +189,10 @@
                     <a class="nav__mobile-link cursor-target" href="#projects" data-mobile-link>Work</a>
                     <a class="nav__mobile-link cursor-target" href="#process" data-mobile-link>Process</a>
                     <a class="nav__mobile-link cursor-target" href="#contact" data-mobile-link>Contact</a>
+                    <button class="nav__mobile-link cursor-target" id="navMobileSwarm" type="button" style="text-align:left;background:none;border:none;font:inherit;color:inherit;width:100%;cursor:pointer;display:flex;align-items:center;gap:10px;">
+                        <span>✨</span>
+                        <span>Coba hal keren…</span>
+                    </button>
                 </nav>
             </div>
         </header>
@@ -883,6 +888,29 @@
             </div>
         </div>
 
-        <script src="main.js"></script>
+        <!-- ======= EASTER EGG POPUP (Bottom-right interactive pill) ======= -->
+        <aside class="easter-pill" id="easterPill" aria-label="Easter egg feature" aria-hidden="true">
+            <button class="easter-pill__btn cursor-target" id="easterPillBtn" type="button" title="Tekan untuk mencoba hal keren!">
+                <span class="easter-pill__pulse" aria-hidden="true">
+                    <span class="easter-pill__pulse-ring"></span>
+                    <span class="easter-pill__pulse-dot"></span>
+                </span>
+                <span class="easter-pill__content">
+                    <span class="easter-pill__title">Mau coba hal keren? ✨</span>
+                    <span class="easter-pill__subtitle">Lihat halaman ini dirakit ulang</span>
+                </span>
+                <svg class="easter-pill__arrow" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                    <path d="M5 12h14M12 5l7 7-7 7" />
+                </svg>
+            </button>
+            <button class="easter-pill__close cursor-target" id="easterPillClose" type="button" aria-label="Tutup pesan">
+                <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round">
+                    <path d="M18 6L6 18M6 6l12 12" />
+                </svg>
+            </button>
+        </aside>
+
+        <script src="swarm.js" defer></script>
+        <script src="main.js" defer></script>
     </body>
 </html>
